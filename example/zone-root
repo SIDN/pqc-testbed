@@ -1,0 +1,15 @@
+$ORIGIN .
+$TTL 3600
+@	IN	SOA	ns1.example.nl. hostmaster.example.nl. (
+			2; serial
+			14400; refresh
+			3600; retry
+			604800; expire
+			300; minimum
+			)
+			IN	NS	s.root-servers.net.
+s.root-servers.net.	IN	A	10.0.1.2
+s.root-servers.net.	IN	AAAA	fc01::2
+nl.			IN	NS	ns1.example.nl.
+ns1.example.nl.    IN      A       10.0.1.3
+ns1.example.nl.    IN      AAAA    fc01::3

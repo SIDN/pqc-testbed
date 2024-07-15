@@ -1,0 +1,106 @@
+# Copyright (c) 2024 SIDN Labs
+# Copyright (c) 2024 SURF
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# 3. Neither the name of the copyright holder nor the names of its
+#    contributors may be used to endorse or promote products derived from
+#    this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+version: "3.8"
+services:
+  exp1-root:
+    image: ghcr.io/sidn/pqc-auth-powerdns:latest
+    ports:
+    - "5302:53/udp"
+    - "5302:53/tcp"
+    networks:
+      examplenet:
+        ipv4_address: 10.0.1.2
+        ipv6_address: fc01::2
+    volumes:
+    - ./pdns.conf:/var/lib/powerdns/pdns.conf:ro
+    - ./named-root.conf:/var/lib/powerdns/named.conf:ro
+    - ./zone-root:/var/lib/powerdns/zones/zone-root-orig:ro
+    entrypoint: bash -c 'ln -s /var/lib/powerdns/pdns.conf /usr/local/etc/pdns.conf ; cp /var/lib/powerdns/zones/zone-root-orig /var/lib/powerdns/zones/zone-root ; pdnsutil create-bind-db /var/lib/powerdns/bind-dnssec-db.sqlite3 ; pdns_server --config-dir=/var/lib/powerdns/ --daemon=no'
+  exp1-nl:
+    image: ghcr.io/sidn/pqc-auth-powerdns:latest
+    ports:
+    - "5303:53/udp"
+    - "5303:53/tcp"
+    networks:
+      examplenet:
+        ipv4_address: 10.0.1.3
+        ipv6_address: fc01::3
+    volumes:
+    - ./pdns.conf:/var/lib/powerdns/pdns.conf:ro
+    - ./named-nl.conf:/var/lib/powerdns/named.conf:ro
+    - ./zone-nl:/var/lib/powerdns/zones/zone-nl-orig:ro
+    entrypoint: bash -c 'ln -s /var/lib/powerdns/pdns.conf /usr/local/etc/pdns.conf ; cp /var/lib/powerdns/zones/zone-nl-orig /var/lib/powerdns/zones/zone-nl ; pdnsutil create-bind-db /var/lib/powerdns/bind-dnssec-db.sqlite3 ; pdns_server --config-dir=/var/lib/powerdns/ --daemon=no'
+  exp1-sidnlabs:
+    image: ghcr.io/sidn/pqc-auth-powerdns:latest
+    ports:
+    - "5304:53/udp"
+    - "5304:53/tcp"
+    networks:
+      examplenet:
+        ipv4_address: 10.0.1.4
+        ipv6_address: fc01::4
+    volumes:
+    - ./pdns.conf:/var/lib/powerdns/pdns.conf:ro
+    - ./named-sidnlabs.conf:/var/lib/powerdns/named.conf:ro
+    - ./zone-sidnlabs.nl:/var/lib/powerdns/zones/zone-sidnlabs-orig:ro
+    entrypoint: bash -c 'ln -s /var/lib/powerdns/pdns.conf /usr/local/etc/pdns.conf ; cp /var/lib/powerdns/zones/zone-sidnlabs-orig /var/lib/powerdns/zones/zone-sidnlabs ; pdnsutil create-bind-db /var/lib/powerdns/bind-dnssec-db.sqlite3 ; pdns_server --config-dir=/var/lib/powerdns/ --daemon=no'
+  exp1-resolver:
+    image: ghcr.io/sidn/pqc-resolver-powerdns:latest
+    ports:
+    - "5310:53/udp"
+    - "5310:53/tcp"
+    networks:
+      examplenet:
+        ipv4_address: 10.0.1.10
+        ipv6_address: fc01::10
+    volumes:
+    - ./recursor.conf:/var/lib/powerdns/recursor.conf:ro
+    - ./root-hints:/var/lib/powerdns/root-hints:ro
+  exp1-resolver-dnssec:
+    image: ghcr.io/sidn/pqc-resolver-powerdns:latest
+    ports:
+    - "5311:53/udp"
+    - "5311:53/tcp"
+    networks:
+      examplenet:
+        ipv4_address: 10.0.1.11
+        ipv6_address: fc01::11
+    volumes:
+    - ./recursor-dnssec.conf:/var/lib/powerdns/recursor.conf:ro
+    - ./root-hints:/var/lib/powerdns/root-hints:ro
+    - ./resolver-lua.conf:/var/lib/powerdns/lua.conf:ro
+    - ./root.dnskey:/var/lib/powerdns/root.dnskey:ro
+
+networks:
+  examplenet:
+    enable_ipv6: true
+    ipam:
+      config:
+      - subnet: fc01::/64
+      - subnet: 10.0.1.0/24
