@@ -2,7 +2,7 @@
 
 This repository contains information to run a testbed using our PQC-ready [resolver](https://github.com/SIDN/pqc-resolver-powerdns) and [authoritative](https://github.com/SIDN/pqc-auth-powerdns) DNS servers.
 
-More information about this project can be found in our blogs ([introduction blog](https://www.sidnlabs.nl/en/news-and-blogs/a-quantum-safe-cryptography-dnssec-testbed), and [the follow-up blog](#) about this testbed) and on the [website](https://patad.sidnlabs.nl/) of the PATAD project.
+More information about this project can be found in our blogs ([introduction blog](https://www.sidnlabs.nl/en/news-and-blogs/a-quantum-safe-cryptography-dnssec-testbed), and [the follow-up blog](https://www.sidnlabs.nl/en/news-and-blogs/set-up-your-own-pqc-testbed-for-dnssec-with-the-patad-open-source-software) about this testbed) and on the [website](https://patad.sidnlabs.nl/) of the PATAD project.
 
 > [!CAUTION]
 > This software is experimental and not meant to be used in production. Use this software at your own risk.
