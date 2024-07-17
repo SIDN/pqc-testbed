@@ -7,10 +7,31 @@ More information about this project can be found in our blogs ([introduction blo
 > [!CAUTION]
 > This software is experimental and not meant to be used in production. Use this software at your own risk.
 
+## Running a testbed
+
+First, install podman and podman-compose (or docker and docker-compose, just replace `podman` with `docker` in all commands below).
+Then, use the following commands to run a testbed.
+
+    git clone https://github.com/SIDN/pqc-testbed.git pqc-testbed
+    cd pqc-testbed/example
+    ./generate-testbed.sh
+
+    # Now, test whether things work by asking the resolver for a pqc-signed record.
+    # This will do a full-stack dnssec validation, from root to sidnlabs.nl.
+    dig +dnssec sidnlabs.nl txt -p 5311 @::1
+
+This example testbed is located in `example`.
+You may look at the `generate-testbed.sh` scripts to see the steps that are needed to set it up.
+
 ## Container images
 
 We use the prebuild container images from Github.
-You could also manually build things each image, if you prefer that.
+You could also manually build each image, if you prefer that.
+
+You can pull both the auth and resolver images from these locations:
+
+     podman pull ghcr.io/sidn/pqc-auth-powerdns:latest
+     podman pull ghcr.io/sidn/pqc-resolver-powerdns:latest
 
 ## New DNSSEC algorithms
 
@@ -25,11 +46,3 @@ These numbers are only valid within our testbed and will, for sure, not be long 
 | 251                  | Falcon-512    |
 | 250                  | SQIsign1      |
 | 249                  | Mayo2         |
-
-## Running a testbed
-
-An example testbed based is located in `example`.
-
-## Documentation
-
-Until this readme is expanded, please check the docs/ directory for relevant documentation.
